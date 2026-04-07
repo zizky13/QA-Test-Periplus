@@ -3,6 +3,7 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -14,12 +15,12 @@ public class HomePage {
 
     // locators
     private By searchBookTextArea = By.id("filter_name_desktop");
-//    private By signInBtnToHover = By.id("nav-signin-text");
+    private By signInBtnToHover = By.xpath("//*[@id=\"nav-signin-text\"]/a");
     private By searchBookBtn = By.xpath("/html/body/header/div[2]/div/div[1]/div[2]/div/form/div/button");
-//    private By loginBtn = By.xpath("/html/body/header/div[2]/div/div[1]/div[3]/div/div[3]/div/ul/li[1]/a");
+    private By loginBtnToHover = By.xpath("/html/body/header/div[2]/div/div[1]/div[3]/div/div[3]/div/ul/li[1]/a");
     private By bookToAddLocation = By.xpath("/html/body/section/div/div/div[2]/div[1]/div[1]/div/div[1]/a");
-//    private By addToCartLocation = By.xpath("/html/body/div[3]/div[1]/div/div/div[3]/div[1]/div[3]/div[1]/button");
-
+    private By addToCartLocation = By.xpath("/html/body/div[3]/div[1]/div/div/div[3]/div[1]/div[3]/div[1]/button");
+    private By preloader = By.className("preloader");
 
 
 
@@ -28,21 +29,52 @@ public class HomePage {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
-    public void searchBook(String title) {
-        // Search book
+    public void waitForPreloader() {
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(preloader));
+    }
+
+    public void enterSearchTerm(String title) {
         WebElement searchBox = wait.until(ExpectedConditions.elementToBeClickable(searchBookTextArea));
         searchBox.click();
         searchBox.sendKeys(title);
-        driver.findElement(searchBookBtn).click();
-
-        // select the first book found
-        WebElement bookToAdd = wait.until(ExpectedConditions.elementToBeClickable(bookToAddLocation));
-        bookToAdd.click();
-
-        // add book to cart
-//        WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(addToCartLocation));
-//        addButton.click();
-//        wait.withTimeout(Duration.ofSeconds(5));
     }
 
+    public void clickSearch() {
+        waitForPreloader();
+        driver.findElement(searchBookBtn).click();
+    }
+
+    public void selectFirstResult() {
+        waitForPreloader();
+        wait.until(ExpectedConditions.elementToBeClickable(bookToAddLocation)).click();
+    }
+
+    public void addToCart() {
+        waitForPreloader();
+        wait.until(ExpectedConditions.elementToBeClickable(addToCartLocation)).click();
+        wait.withTimeout(Duration.ofSeconds(5));
+    }
+
+    public void searchAndAddFirstResultToCart(String title) {
+        enterSearchTerm(title);
+        clickSearch();
+        selectFirstResult();
+        addToCart();
+    }
+
+    public void hoverToSignIn() {
+        waitForPreloader();
+
+        WebElement signInBtn = driver.findElement(signInBtnToHover);
+        WebElement loginBtn = driver.findElement(loginBtnToHover);
+
+        Actions action = new Actions(driver);
+        action.moveToElement(signInBtn).perform();
+        wait.withTimeout(Duration.ofSeconds(5));
+
+        action.moveToElement(loginBtn).perform();
+        wait.withTimeout(Duration.ofSeconds(5));
+
+        action.click(loginBtn).perform();
+    }
 }

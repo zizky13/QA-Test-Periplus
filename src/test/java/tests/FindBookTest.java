@@ -8,6 +8,12 @@ public class FindBookTest extends BaseTest {
     @Test
     public void findBook() {
         HomePage home = new HomePage(driver);
-        home.searchBook("Sapiens");
+        home.searchAndAddFirstResultToCart("Sapiens");
+    }
+
+    @Test
+    public void login() {
+        HomePage home = new HomePage(driver);
+        home.hoverToSignIn();
     }
 }
