@@ -2,35 +2,44 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import java.util.List;
 
 public class CartPage extends BasePage {
 
-    private By itemQuantity = By.cssSelector("input[id^='qty_']");
-    private By emptyCartMessage = By.xpath("//div[@class='content']");
-    private By removeBtn = By.xpath("//button[@name='minus']");
-
+    private final By itemQuantity = By.cssSelector("input[id^='qty_']");
 
     public CartPage(WebDriver driver) {
         super(driver);
     }
 
-    public void clearCart() {
+    public int getTotalBasketQuantity() {
+        // This function captures total quantity of all item in the cart
         waitForPreloader();
-        if (!isCartEmpty() ){
-            while(!driver.findElements(removeBtn).isEmpty()) {
-                click(removeBtn);
-                waitForPreloader();
+
+        List<WebElement> quantityFields = driver.findElements(itemQuantity);
+
+        if (quantityFields.isEmpty()) {
+            return 0;
+        }
+
+        int totalCount = 0;
+        for (WebElement field: quantityFields) {
+            try {
+                String val = field.getAttribute("value");
+                totalCount += Integer.parseInt(val);
+            } catch (Exception e) {
+                throw new RuntimeException("CRITICAL DATA ERROR: Could not parse cart quantity.");
             }
         }
-    }
 
-    public boolean isCartEmpty() {
-        waitForPreloader();
-        return !driver.findElements(emptyCartMessage).isEmpty();
+        return totalCount;
     }
 
     public int getItemQuantity() {
+        // get single item quantity for the topmost item in cart
         waitForPreloader();
         String value = "";
 

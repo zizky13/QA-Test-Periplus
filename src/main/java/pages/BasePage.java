@@ -2,6 +2,7 @@ package pages;
 
 import components.SearchComponent;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -9,6 +10,10 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+
+
+// Acts as central class for the locators
+// Basically hold up all the navbar components except search component
 
 public class BasePage {
     // drivers
@@ -23,7 +28,9 @@ public class BasePage {
     private final By logoutBtnToHover = By.xpath("//div[@class='shopping-item']//a[normalize-space()='Logout']");
     private final By preloader = By.xpath("/html/body/div[2]");
     private final By loginBtnToHover = By.linkText("Login");
-    private final By cartButtonLocation = By.xpath("//*[@id=\"show-your-cart\"]/a");
+    private final By modalCloseLocator = By.cssSelector("#Notification-Modal > div > div > div > div:nth-child(1) > button");
+    protected final By cartButtonLocation = By.xpath("//*[@id=\"show-your-cart\"]/a");
+
 
     // Constructor
     public BasePage(WebDriver driver) {
@@ -34,13 +41,25 @@ public class BasePage {
     }
 
     // ==== START OF FUNCTIONS SECTION ====
+    // The class is designed to be Atomic. So it would be easier to maintain later
     protected void waitForPreloader() {
         wait.until(ExpectedConditions.invisibilityOfElementLocated(preloader));
     }
 
+    public void closeModalAfterAddItem() {
+        click(modalCloseLocator);
+    }
+
     protected void click(By locator) {
         waitForPreloader();
-        wait.until(ExpectedConditions.elementToBeClickable(locator)).click();
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+
+        try {
+            element.click();
+        } catch (ElementClickInterceptedException e) {
+            waitForPreloader();
+            wait.until(ExpectedConditions.elementToBeClickable(locator)).click();
+        }
     }
 
     protected void type(By locator, String text) {
@@ -52,7 +71,6 @@ public class BasePage {
     private void hoverToSignIn() {
         // - Wait for the sign in to be visible
         // - Perform hover
-        // web elements
         WebElement signInBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(signInBtnToHover));
         action.moveToElement(signInBtn).perform();
     }
@@ -74,6 +92,6 @@ public class BasePage {
 
     public void goToCartPage() {
         waitForPreloader();
-        wait.until(ExpectedConditions.elementToBeClickable(cartButtonLocation)).click();
+        click(cartButtonLocation);
     }
 }

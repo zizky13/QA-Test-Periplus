@@ -13,5 +13,6 @@ public class ProductDetailPage extends BasePage {
 
     public void addToCart() {
         click(addToCartLocation);
+        closeModalAfterAddItem();
     }
 }
