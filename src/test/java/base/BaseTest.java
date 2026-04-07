@@ -10,7 +10,6 @@ import org.testng.annotations.AfterMethod;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Properties;
 
 public class BaseTest {
@@ -21,7 +20,8 @@ public class BaseTest {
     public void setUp() throws IOException {
         // 1. Load config file
         prop = new Properties();
-        FileInputStream ip = new FileInputStream("src/test/resources/config.properties");
+        String configPath = System.getProperty("user.dir") + "/src/test/resources/config.properties";
+        FileInputStream ip = new FileInputStream(configPath);
         prop.load(ip);
 
         String browserName = prop.getProperty("browser").toLowerCase();
@@ -46,13 +46,12 @@ public class BaseTest {
 
         driver.get(prop.getProperty("url"));
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
     @AfterMethod
     public void tearDown() {
         if (driver != null) {
-//            driver.quit();
+            driver.quit();
         }
     }
 }
