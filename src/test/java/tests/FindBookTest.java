@@ -14,6 +14,6 @@ public class FindBookTest extends BaseTest {
     @Test
     public void login() {
         HomePage home = new HomePage(driver);
-        home.hoverToSignIn();
+        home.goToLogin();
     }
 }

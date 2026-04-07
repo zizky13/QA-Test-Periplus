@@ -12,6 +12,9 @@ import java.time.Duration;
 public class HomePage {
     private WebDriver driver;
     private WebDriverWait wait;
+    private Actions action;
+    private WebElement signInBtn;
+    private WebElement loginBtn;
 
     // locators
     private By searchBookTextArea = By.id("filter_name_desktop");
@@ -27,6 +30,7 @@ public class HomePage {
     public HomePage (WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        this.action = new Actions(driver);
     }
 
     public void waitForPreloader() {
@@ -63,18 +67,21 @@ public class HomePage {
     }
 
     public void hoverToSignIn() {
-        waitForPreloader();
-
-        WebElement signInBtn = driver.findElement(signInBtnToHover);
-        WebElement loginBtn = driver.findElement(loginBtnToHover);
-
-        Actions action = new Actions(driver);
+        signInBtn = driver.findElement(signInBtnToHover);
         action.moveToElement(signInBtn).perform();
         wait.withTimeout(Duration.ofSeconds(5));
+    }
 
+    public void hoverToLogin() {
+        loginBtn = driver.findElement(loginBtnToHover);
         action.moveToElement(loginBtn).perform();
         wait.withTimeout(Duration.ofSeconds(5));
+    }
 
+    public void goToLogin() {
+        waitForPreloader();
+        hoverToSignIn();
+        hoverToLogin();
         action.click(loginBtn).perform();
     }
 }
