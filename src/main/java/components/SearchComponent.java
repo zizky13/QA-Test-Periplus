@@ -11,8 +11,8 @@ public class SearchComponent {
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    private final By searchInput = By.cssSelector("#filter_name_desktop");
-    private final By searchSubmit = By.cssSelector("body > header > div.middle-inner > div > div:nth-child(1) > div.col > div > form > div > button");
+    private final By searchInput = By.id("filter_name_desktop");
+    private final By searchSubmit = By.cssSelector("div[class='search-bar d-flex w-100'] button[type='submit']");
 
 
     public SearchComponent(WebDriver driver) {

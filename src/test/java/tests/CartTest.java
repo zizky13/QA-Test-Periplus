@@ -14,16 +14,26 @@ public class CartTest extends BaseTest {
         SearchResultPage searchResultPage = new SearchResultPage(driver);
         ProductDetailPage productDetailPage = new ProductDetailPage(driver);
 
+        // Take initial quantity of the comparable item first, make sure there is no product on cart page
+        basePage.goToLogin();
+        loginPage.loginAs(prop.getProperty("username"), prop.getProperty("password"));
+        basePage.goToCartPage();
+        int initialQuantity = cartPage.getItemQuantity();
+        basePage.logout();
+
+        // Search any product and add it to cart
         basePage.searchComponent.executeSearch("Sapiens");
         searchResultPage.selectFirstResult();
         productDetailPage.addToCart();
 
+        // Login as user, then go to cart page to validate quantity
         basePage.goToLogin();
-//        // credential provided is a dummy email
-        loginPage.loginAs("insert email", "insert password");
+        // credential provided is a dummy email
+        loginPage.loginAs(prop.getProperty("username"), prop.getProperty("password"));
         basePage.goToCartPage();
-        int quantity = cartPage.getItemQuantity();
-//
-        Assert.assertEquals(quantity, 1, "Guess cart is note merged to the main account!");
+        int finalQuantity = cartPage.getItemQuantity();
+
+        Assert.assertEquals(finalQuantity, initialQuantity + 1,
+                "Cart Merge Failure: Total items do not match Initial (" + initialQuantity + ") + Added (1)");
     }
 }

@@ -19,8 +19,9 @@ public class BasePage {
 
 
     // locators
-    private final By signInBtnToHover = By.cssSelector("#nav-signin-text > a");
-    private final By preloader = By.cssSelector("body > div.preloader");
+    private final By signInBtnToHover = By.id("nav-signin-text");
+    private final By logoutBtnToHover = By.xpath("//div[@class='shopping-item']//a[normalize-space()='Logout']");
+    private final By preloader = By.xpath("/html/body/div[2]");
     private final By loginBtnToHover = By.linkText("Login");
     private final By cartButtonLocation = By.xpath("//*[@id=\"show-your-cart\"]/a");
 
@@ -62,6 +63,13 @@ public class BasePage {
         // hover to sign in dropdown
         hoverToSignIn();
         click(loginBtnToHover);
+    }
+
+    public void logout() {
+        waitForPreloader();
+        hoverToSignIn();
+        click(logoutBtnToHover);
+        waitForPreloader();
     }
 
     public void goToCartPage() {
